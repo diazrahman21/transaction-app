@@ -11,4 +11,4 @@ frontend/dist
 backend/.env
 frontend/.env
 coverage
-.vscode
+.vscode/
