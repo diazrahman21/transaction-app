@@ -1,14 +1,22 @@
 <template>
   <AppShell @logout="handleLogout">
-    <section class="space-y-6">
-      <div class="rounded-3xl border border-white/80 bg-white/80 p-6 shadow-lg backdrop-blur">
-        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-sky-700">{{ isEdit ? 'Edit Transaksi' : 'Tambah Transaksi' }}</p>
-        <h2 class="mt-1 text-3xl font-black tracking-tight text-slate-950">
+    <section class="space-y-5 sm:space-y-6">
+      <div class="rounded-3xl border border-white/80 bg-white/90 p-5 shadow-lg shadow-slate-950/5 backdrop-blur sm:p-6">
+        <p class="text-xs font-black uppercase tracking-[0.28em] text-sky-700">{{ isEdit ? 'Edit Transaksi' : 'Tambah Transaksi' }}</p>
+        <h2 class="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
           {{ isEdit ? 'Perbarui data transaksi' : 'Buat transaksi baru' }}
         </h2>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+          {{ isEdit ? 'Pastikan perubahan data transaksi sudah sesuai sebelum menyimpan.' : 'Lengkapi data transaksi operasional dengan benar sebelum menyimpan.' }}
+        </p>
       </div>
 
-      <TransactionForm :model-value="formValue" :submit-label="isEdit ? 'Simpan Perubahan' : 'Simpan Transaksi'" @submit="handleSubmit" />
+      <TransactionForm
+        :model-value="formValue"
+        :submitting="submitting"
+        :submit-label="isEdit ? 'Simpan Perubahan' : 'Simpan Transaksi'"
+        @submit="handleSubmit"
+      />
     </section>
   </AppShell>
 </template>
@@ -19,6 +27,7 @@ import { useRoute, useRouter } from 'vue-router';
 import AppShell from '../components/AppShell.vue';
 import TransactionForm from '../components/TransactionForm.vue';
 import { createTransaction, fetchTransaction, updateTransaction } from '../services/transactions';
+import { clearStoredToken } from '../services/auth';
 import { useToast } from '../composables/useToast';
 
 const route = useRoute();
@@ -26,6 +35,7 @@ const router = useRouter();
 const toast = useToast();
 
 const formValue = ref({});
+const submitting = ref(false);
 const transactionId = computed(() => route.params.id);
 const isEdit = computed(() => Boolean(transactionId.value));
 
@@ -44,6 +54,12 @@ async function loadTransaction() {
 }
 
 async function handleSubmit(payload) {
+  if (submitting.value) {
+    return;
+  }
+
+  submitting.value = true;
+
   try {
     if (isEdit.value) {
       await updateTransaction(transactionId.value, payload);
@@ -56,11 +72,13 @@ async function handleSubmit(payload) {
     await router.push({ name: 'transactions' });
   } catch (error) {
     toast.error(error.response?.data?.message || 'Gagal menyimpan transaksi.');
+  } finally {
+    submitting.value = false;
   }
 }
 
 function handleLogout() {
-  localStorage.removeItem('token');
+  clearStoredToken();
   router.push({ name: 'login' });
 }
 
