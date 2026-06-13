@@ -6,17 +6,10 @@
         <h1 class="max-w-xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
           Login untuk mengelola transaksi operasional.
         </h1>
-        <p class="max-w-lg text-base leading-7 text-slate-600">
-          Aplikasi ini menampilkan daftar transaksi, filter tanggal, form tambah/edit, serta proteksi route berbasis JWT.
-        </p>
-        <div class="rounded-3xl border border-white/70 bg-white/70 p-6 shadow-lg backdrop-blur">
-          <p class="text-sm font-semibold text-slate-500">Akun default</p>
-          <p class="mt-1 text-lg font-bold text-slate-900">admin / admin123</p>
-        </div>
       </section>
 
       <section class="rounded-[2rem] border border-white/80 bg-white/80 p-8 shadow-2xl backdrop-blur">
-        <h2 class="text-2xl font-black text-slate-950">Masuk ke sistem</h2>
+        <h2 class="text-2xl font-black text-slate-950">Masuk</h2>
         <form class="mt-6 space-y-5" @submit.prevent="handleLogin">
           <label class="space-y-2 block">
             <span class="text-sm font-semibold text-slate-700">Username</span>
